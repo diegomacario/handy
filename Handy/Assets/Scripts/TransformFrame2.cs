@@ -10,9 +10,9 @@ public class TransformFrame2
     public SerializableQuat rotation;
     public SerializableVec3 scale;
 
-    public static TransformFrame FromTransform(CaptureTransform2 c)
+    public static TransformFrame2 FromTransform(CaptureTransform2 c)
     {
-        var ret = new TransformFrame();
+        var ret = new TransformFrame2();
 
         if (c.captureWorldTransform)
         {
@@ -27,7 +27,6 @@ public class TransformFrame2
                 ret.position = SerializableVec3.FromVector3(c.transform.localPosition);
                 ret.rotation = SerializableQuat.FromQuaternion(c.transform.localRotation);
                 ret.scale = SerializableVec3.FromVector3(c.transform.localScale);
-                c.firstCapture = false;
             }
             else
             {
@@ -54,9 +53,9 @@ public class TransformFrame2
         }
     }
 
-    public static TransformFrame FromFlattened(float[] f)
+    public static TransformFrame2 FromFlattened(float[] f)
     {
-        var ret = new TransformFrame();
+        var ret = new TransformFrame2();
         ret.position = new SerializableVec3();
         ret.position.x = f[0];
         ret.position.y = f[1];
@@ -73,19 +72,33 @@ public class TransformFrame2
         return ret;
     }
 
-    public float[] Flattened()
+    public float[] Flattened(CaptureTransform2 c)
     {
-        return new float[10] {
-            position.x,
-            position.y,
-            position.z,
-            rotation.x,
-            rotation.y,
-            rotation.z,
-            rotation.w,
-            scale.x,
-            scale.y,
-            scale.z,
-        };
+        if (c.captureWorldTransform || c.firstCapture)
+        {
+            c.firstCapture = false;
+
+            return new float[10] {
+                position.x,
+                position.y,
+                position.z,
+                rotation.x,
+                rotation.y,
+                rotation.z,
+                rotation.w,
+                scale.x,
+                scale.y,
+                scale.z,
+            };
+        }
+        else
+        {
+            return new float[4] {
+                rotation.x,
+                rotation.y,
+                rotation.z,
+                rotation.w,
+            };
+        }
     }
 }

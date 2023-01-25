@@ -85,7 +85,7 @@ public class CaptureManager2 : MonoBehaviour
             capturer.firstCapture = true;
         }
 
-        File.AppendAllLines(m_Filepath, new string[] { JsonConvert.SerializeObject(m_Timestamps) });
+        File.AppendAllLines(m_Filepath, new string[] { JsonConvert.SerializeObject(m_Timestamps.ToArray()) });
 
         // Print the location of the finished recording (.jsonlines)
         Debug.Log("Finished recording. The .jsonlines file is located here: " + m_Filepath);
@@ -135,8 +135,8 @@ public class CaptureManager2 : MonoBehaviour
             return;
         }
 
-        m_Timestamps.Append(m_CurrentTimestamp);
-        var flattenedTransforms = m_Capturers.Select(c => TransformFrame2.FromTransform(c).Flattened());
+        m_Timestamps.Add(m_CurrentTimestamp);
+        var flattenedTransforms = m_Capturers.Select(c => TransformFrame2.FromTransform(c).Flattened(c));
         File.AppendAllLines(m_Filepath, new string[] { JsonConvert.SerializeObject(flattenedTransforms) });
         m_CurrentTimestamp += Time.deltaTime;
     }
